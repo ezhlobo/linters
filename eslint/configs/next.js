@@ -1,28 +1,20 @@
-const { JAVASCRIPT_FILES } = require('../constants');
-const nextRules = require('../rules/next');
+const { fixupConfigRules } = require('@eslint/compat');
+const eslintrc = require('@eslint/eslintrc');
 
-/** @type {import("eslint").Linter.Config} */
-module.exports = {
-  extends: [require.resolve('./react'), 'plugin:@next/next/core-web-vitals'],
-  rules: {
-    ...nextRules,
-  },
-  overrides: [
-    {
-      files: JAVASCRIPT_FILES,
-      parser: '@babel/eslint-parser',
-      parserOptions: {
-        requireConfigFile: false,
-        sourceType: 'module',
-        allowImportExportEverywhere: true,
-        babelOptions: {
-          presets: ['next/babel'],
-          caller: {
-            // Eslint supports top level await when a parser for it is included. We enable the parser by default for Babel.
-            supportsTopLevelAwait: true,
-          },
-        },
-      },
+const nextRules = require('../rules/next');
+const react = require('./react');
+
+const compat = new eslintrc.FlatCompat({
+  baseDirectory: __dirname,
+});
+
+/** @type {import('eslint').Linter.Config} */
+module.exports = [
+  ...react,
+  ...fixupConfigRules(compat.extends('plugin:@next/next/core-web-vitals')),
+  {
+    rules: {
+      ...nextRules,
     },
-  ],
-};
+  },
+];

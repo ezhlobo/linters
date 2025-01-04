@@ -5,6 +5,7 @@ const standardRules = require('./standard');
  */
 const disabledTypescriptRules = {
   '@typescript-eslint/no-empty-interface': 'off',
+  '@typescript-eslint/no-empty-object-type': 'off',
   '@typescript-eslint/non-nullable-type-assertion-style': 'off',
   '@typescript-eslint/prefer-nullish-coalescing': 'off',
 };
@@ -16,6 +17,7 @@ const disabledTypescriptRules = {
 const disabledImportRules = {
   'import/default': 'off',
   'import/export': 'off',
+  'import/named': 'off',
   'import/namespace': 'off',
   'import/no-unresolved': 'off',
 };
@@ -91,6 +93,22 @@ module.exports = {
   '@typescript-eslint/require-array-sort-compare': [
     'error',
     { ignoreStringArrays: true },
+  ],
+  /**
+   * Enforce template literal expressions to be of `string` type.
+   *
+   * 🚫 Not fixable - https://typescript-eslint.io/rules/restrict-template-expressions/
+   */
+  '@typescript-eslint/restrict-template-expressions': [
+    'error',
+    {
+      allowAny: false,
+      allowBoolean: false,
+      allowNever: false,
+      allowNullish: false,
+      allowNumber: true,
+      allowRegExp: false,
+    },
   ],
   /**
    * Require exhaustive checks when using union types in switch statements.
