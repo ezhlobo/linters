@@ -1,41 +1,44 @@
+const tseslint = require('typescript-eslint');
+const tsdoc = require('eslint-plugin-tsdoc');
+
 const { TYPESCRIPT_FILES } = require('../constants');
+const { applyConfigsToFiles } = require('../utils');
 const typescriptRules = require('../rules/typescript');
 const tsdocRules = require('../rules/tsdoc');
 
-/** @type {import("eslint").Linter.Config} */
-module.exports = {
-  overrides: [
-    {
-      files: TYPESCRIPT_FILES,
-      parser: '@typescript-eslint/parser',
+/** @type {import('eslint').Linter.Config[]} */
+module.exports = [
+  ...tseslint.configs.strictTypeChecked,
+  ...tseslint.configs.stylisticTypeChecked,
+  {
+    languageOptions: {
       parserOptions: {
-        project: true,
-        sourceType: 'module',
-        ecmaFeatures: {
-          jsx: true,
-        },
-        warnOnUnsupportedTypeScriptVersion: true,
-      },
-      extends: [
-        'plugin:@typescript-eslint/strict-type-checked',
-        'plugin:@typescript-eslint/stylistic-type-checked',
-        'plugin:import/typescript',
-      ],
-      plugins: ['eslint-plugin-tsdoc'],
-      rules: {
-        ...typescriptRules,
-        ...tsdocRules,
-      },
-      settings: {
-        'import/resolver': {
-          node: {
-            extensions: ['.js', '.jsx', '.ts', '.tsx'],
-          },
-          typescript: {
-            alwaysTryTypes: true,
-          },
-        },
+        projectService: true,
       },
     },
-  ],
-};
+    settings: {
+      'import/parsers': {
+        espree: ['.js', '.cjs', '.mjs', '.jsx'],
+        '@typescript-eslint/parser': ['.ts', '.tsx'],
+      },
+      'import/resolver': {
+        node: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
+        typescript: { alwaysTryTypes: true },
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+      tsdoc,
+    },
+    rules: {
+      ...typescriptRules,
+    },
+  },
+  ...applyConfigsToFiles(TYPESCRIPT_FILES, [
+    {
+      rules: {
+        ...tsdocRules,
+      },
+    },
+  ]),
+];

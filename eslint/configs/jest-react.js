@@ -1,4 +1,4 @@
-/** @type {import("eslint").Linter.Config} */
-module.exports = {
-  extends: ['plugin:testing-library/react'],
-};
+const testingLibrary = require('eslint-plugin-testing-library');
+
+/** @type {import('eslint').Linter.Config[]} */
+module.exports = [...testingLibrary.configs['flat/react']];

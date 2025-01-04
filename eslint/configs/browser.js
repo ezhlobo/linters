@@ -1,7 +1,15 @@
-/** @type {import("eslint").Linter.Config} */
-module.exports = {
-  extends: require.resolve('./_base'),
-  env: {
-    browser: true,
+const globals = require('globals');
+
+const base = require('./_base');
+
+/** @type {import('eslint').Linter.Config[]} */
+module.exports = [
+  ...base,
+  {
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+      },
+    },
   },
-};
+];
