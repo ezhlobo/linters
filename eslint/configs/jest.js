@@ -6,8 +6,8 @@ import { applyConfigsToFiles } from '../utils.js';
 
 /** @type {import("eslint").Linter.Config} */
 export default [
-  ...jest.configs['flat/recommended'],
-  ...jest.configs['flat/style'],
+  jest.configs['flat/recommended'],
+  jest.configs['flat/style'],
   {
     rules: {
       ...jestRules,
