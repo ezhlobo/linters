@@ -6,6 +6,6 @@ const disabledRules = {
   'jsx-a11y/no-onchange': 'off',
 };
 
-module.exports = {
+export default {
   ...disabledRules,
 };

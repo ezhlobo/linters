@@ -1,7 +1,7 @@
-const node = require('./eslint/configs/node');
+import node from './eslint/configs/node.js';
 
 /** @type {import('eslint').Linter.Config[]} */
-module.exports = [
+export default [
   ...node,
   {
     files: ['eslint/rules/**'],

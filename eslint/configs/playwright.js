@@ -1,9 +1,9 @@
-const playwright = require('eslint-plugin-playwright');
+import playwright from 'eslint-plugin-playwright';
 
-const playwrightRules = require('../rules/playwright');
+import playwrightRules from '../rules/playwright.js';
 
 /** @type {import('eslint').Linter.Config} */
-module.exports = [
+export default [
   ...playwright.configs['flat/recommended'],
   {
     rules: {

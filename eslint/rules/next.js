@@ -11,6 +11,6 @@ const a11yRules = {
   ],
 };
 
-module.exports = {
+export default {
   ...a11yRules,
 };

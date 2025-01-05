@@ -1,42 +1,52 @@
-const js = require('@eslint/js');
-const comments = require('@eslint-community/eslint-plugin-eslint-comments/configs');
-const eslintPluginUnicorn = require('eslint-plugin-unicorn');
-const eslintrc = require('@eslint/eslintrc');
-const prettierRecommended = require('eslint-plugin-prettier/recommended');
-const stylistic = require('@stylistic/eslint-plugin');
-const importPlugin = require('eslint-plugin-import');
-const simpleImportSort = require('eslint-plugin-simple-import-sort');
+import * as eslintrc from '@eslint/eslintrc';
+import js from '@eslint/js';
+import comments from '@eslint-community/eslint-plugin-eslint-comments/configs';
+import stylistic from '@stylistic/eslint-plugin';
+import importPlugin from 'eslint-plugin-import';
+import prettierRecommended from 'eslint-plugin-prettier/recommended';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import unicorn from 'eslint-plugin-unicorn';
 
-const commentsRules = require('../rules/comments');
-const importRules = require('../rules/import');
-const standardRules = require('../rules/standard');
-const stylisticRules = require('../rules/stylistic');
-const unicornRules = require('../rules/unicorn');
+import commentsRules from '../rules/comments.js';
+import importRules from '../rules/import.js';
+import standardRules from '../rules/standard.js';
+import stylisticRules from '../rules/stylistic.js';
+import unicornRules from '../rules/unicorn.js';
 
 /**
  * The base ESLint config which is shared among all environments.
  *
  * @type {import('eslint').Linter.Config[]}
  */
-module.exports = [
-  {
-    languageOptions: {
-      ...eslintrc.Legacy.environments.get('es2024'),
-    },
-    linterOptions: {
-      reportUnusedDisableDirectives: true,
-    },
-    plugins: {
-      unicorn: eslintPluginUnicorn,
-      '@stylistic': stylistic,
-      'simple-import-sort': simpleImportSort,
-    },
-  },
+export default [
   js.configs.recommended,
   importPlugin.flatConfigs.recommended,
   comments.recommended,
   prettierRecommended,
   {
+    languageOptions: {
+      ...eslintrc.Legacy.environments.get('es2024'),
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+    },
+    linterOptions: {
+      reportUnusedDisableDirectives: true,
+    },
+    plugins: {
+      unicorn,
+      '@stylistic': stylistic,
+      'simple-import-sort': simpleImportSort,
+    },
+    settings: {
+      'import/parsers': {
+        espree: ['.js', '.cjs', '.mjs', '.jsx'],
+        '@typescript-eslint/parser': ['.ts', '.tsx'],
+      },
+      'import/resolver': {
+        node: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
+        typescript: { alwaysTryTypes: true },
+      },
+    },
     rules: {
       ...standardRules,
       ...stylisticRules,

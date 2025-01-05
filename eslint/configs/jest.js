@@ -1,11 +1,11 @@
-const jest = require('eslint-plugin-jest');
+import jest from 'eslint-plugin-jest';
 
-const { TYPESCRIPT_FILES } = require('../constants');
-const jestRules = require('../rules/jest');
-const { applyConfigsToFiles } = require('../utils');
+import { TYPESCRIPT_FILES } from '../constants.js';
+import jestRules from '../rules/jest.js';
+import { applyConfigsToFiles } from '../utils.js';
 
 /** @type {import("eslint").Linter.Config} */
-module.exports = [
+export default [
   ...jest.configs['flat/recommended'],
   ...jest.configs['flat/style'],
   {

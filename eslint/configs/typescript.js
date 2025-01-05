@@ -1,29 +1,19 @@
-const tseslint = require('typescript-eslint');
-const tsdoc = require('eslint-plugin-tsdoc');
+import tsdoc from 'eslint-plugin-tsdoc';
+import * as tseslint from 'typescript-eslint';
 
-const { TYPESCRIPT_FILES } = require('../constants');
-const { applyConfigsToFiles } = require('../utils');
-const typescriptRules = require('../rules/typescript');
-const tsdocRules = require('../rules/tsdoc');
+import { TYPESCRIPT_FILES } from '../constants.js';
+import tsdocRules from '../rules/tsdoc.js';
+import typescriptRules from '../rules/typescript.js';
+import { applyConfigsToFiles } from '../utils.js';
 
 /** @type {import('eslint').Linter.Config[]} */
-module.exports = [
+export default [
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
   {
     languageOptions: {
       parserOptions: {
         projectService: true,
-      },
-    },
-    settings: {
-      'import/parsers': {
-        espree: ['.js', '.cjs', '.mjs', '.jsx'],
-        '@typescript-eslint/parser': ['.ts', '.tsx'],
-      },
-      'import/resolver': {
-        node: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
-        typescript: { alwaysTryTypes: true },
       },
     },
     plugins: {

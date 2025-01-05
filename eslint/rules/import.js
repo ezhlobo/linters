@@ -18,7 +18,7 @@ const typeImportOrder = baseImportOrder.flatMap(group =>
 
 const importOrder = [typeImportOrder, ...baseImportOrder];
 
-module.exports = {
+export default {
   /**
    * Enforce that named type-only specifiers only ever written as part of a
    * top-level, type-only import; and never with an inline marker.

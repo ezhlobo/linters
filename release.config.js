@@ -1,4 +1,7 @@
-module.exports = {
+/**
+ * @type {import('semantic-release').GlobalConfig}
+ */
+export default {
   branches: ['main', { name: 'canary', channel: 'canary', prerelease: true }],
   plugins: [
     '@semantic-release/commit-analyzer',

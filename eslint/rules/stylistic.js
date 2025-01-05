@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   /**
    * This rule requires or disallows blank lines between the given 2 kinds of
    * statements. Properly blank lines help developers to understand the code.

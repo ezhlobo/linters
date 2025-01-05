@@ -1,15 +1,13 @@
-const { fixupConfigRules } = require('@eslint/compat');
-const eslintrc = require('@eslint/eslintrc');
+import { fixupConfigRules } from '@eslint/compat';
+import * as eslintrc from '@eslint/eslintrc';
 
-const nextRules = require('../rules/next');
-const react = require('./react');
+import nextRules from '../rules/next.js';
+import react from './react.js';
 
-const compat = new eslintrc.FlatCompat({
-  baseDirectory: __dirname,
-});
+const compat = new eslintrc.FlatCompat();
 
 /** @type {import('eslint').Linter.Config} */
-module.exports = [
+export default [
   ...react,
   ...fixupConfigRules(compat.extends('plugin:@next/next/core-web-vitals')),
   {

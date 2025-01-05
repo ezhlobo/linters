@@ -1,4 +1,4 @@
-const storybook = require('eslint-plugin-storybook');
+import storybook from 'eslint-plugin-storybook';
 
 /** @type {import('eslint').Linter.Config} */
-module.exports = [...storybook.configs['flat/recommended']];
+export default [...storybook.configs['flat/recommended']];

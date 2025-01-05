@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   /**
    * Disallow duplicate setup and teardown hooks.
    *
