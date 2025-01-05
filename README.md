@@ -77,13 +77,13 @@ export default {
 This ESLint config is designed to be composable.
 
 The following base configs are available. You can use one or both of these
-configs, but they should always be first in `extends`:
+configs, but they should always be first in the configs order:
 
 - `@datarockets/style-guide/eslint/browser`
 - `@datarockets/style-guide/eslint/node`
 
 Note that you can scope configs, so that configs only target specific files.
-For more information, see: [Scoped configuration with `overrides`](#scoped-configuration-with-overrides).
+For more information, see: [Scoped configuration with `files`](#scoped-configuration-with-files).
 
 The following additional configs are available:
 
@@ -136,68 +136,62 @@ The following additional configs are available:
 
 ### Examples
 
-> You'll need to use `require.resolve` to provide ESLint with absolute paths,
-> due to an issue around ESLint config resolution (see
-> [eslint/eslint#9188](https://github.com/eslint/eslint/issues/9188)).
-
 #### Next.js
 
-> Note: you might need to clear ESLint cache for the first usage.
+> Note: you might need to clear ESLint's cache for the first usage.
 
-Here is a recommened approach of using ESLing configs in Next.js projects.
+Here is a recommended approach of using ESLint configs in Next.js projects.
 
-`.eslintrc.js`:
+`eslint.config.js`:
 
 ```js
-module.exports = {
-  root: true,
-  ignorePatterns: [
-    'node_modules/',
-    '/public',
-    '/playwright-report',
-    '__screenshots__/',
-    // Specify the needed dot folders via negated pattern to make IDE ESLint
-    // plugin to include it.
-    '!/.storybook',
-    // Any other directories which makes sense to ignore to improve ESLint
-    // performance. Note: ESLint ignores dot directories (e.g. .git) by default.
-  ],
-  extends: [
-    require.resolve('@datarockets/style-guide/eslint/node'),
-    require.resolve('@datarockets/style-guide/eslint/browser'),
-    require.resolve('@datarockets/style-guide/eslint/typescript'),
-    require.resolve('@datarockets/style-guide/eslint/next'),
-  ],
-  overrides: [
-    // Unit tests (Jest)
-    {
-      files: [
-        'src/**/__tests__/**/*.{js,jsx,ts,tsx}',
-        'src/**/?(*.)+(spec|test).{js,jsx,ts,tsx}',
-        'jest.setup.{js,ts}',
-      ],
-      extends: [
-        require.resolve('@datarockets/style-guide/eslint/jest'),
-        require.resolve('@datarockets/style-guide/eslint/jest-react'),
-      ],
-      settings: {
-        jest: {
-          version: require('jest/package.json').version,
-        },
-      },
-    },
-    // E2E tests (Playwright)
-    {
-      files: ['tests/**/?(*.)+(spec|test).{js,jsx,ts,tsx}'],
-      extends: [require.resolve('@datarockets/style-guide/eslint/playwright')],
-    },
-    // Storybook
-    {
-      files: ['*.stories.{js,jsx,ts,tsx}'],
-      extends: [require.resolve('@datarockets/style-guide/eslint/storybook')],
-    },
-  ],
-};
+import path from 'node:path';
+
+import browser from '@datarockets/style-guide/eslint/browser';
+import jest from '@datarockets/style-guide/eslint/jest';
+import jestReact from '@datarockets/style-guide/eslint/jest-react';
+import next from '@datarockets/style-guide/eslint/next';
+import node from '@datarockets/style-guide/eslint/node';
+import playwright from '@datarockets/style-guide/eslint/playwright';
+import storybook from '@datarockets/style-guide/eslint/storybook';
+import ts from '@datarockets/style-guide/eslint/typescript';
+import {
+  applyConfigsToFiles,
+  includeIgnoreFile,
+} from '@datarockets/style-guide/eslint/utils';
+
+const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
+
+/** @type {import('eslint').Linter.Config[]} */
+export default [
+  includeIgnoreFile(gitignorePath),
+  {
+    ignores: [
+      // Any directories/files which makes sense to ignore to improve ESLint
+      // performance.
+    ],
+  },
+  ...node,
+  ...browser,
+  ...ts,
+  ...next,
+  // Unit tests (Jest)
+  ...applyConfigsToFiles(
+    [
+      'src/**/__tests__/**/*.{js,jsx,ts,tsx}',
+      'src/**/?(*.)+(spec|test).{js,jsx,ts,tsx}',
+      'jest.setup.{js,ts}',
+    ],
+    [...jest, ...jestReact, { settings: { jest: { version: 20 } } }],
+  ),
+  // E2E tests (Playwright)
+  ...applyConfigsToFiles(
+    ['tests/**/?(*.)+(spec|test).{js,jsx,ts,tsx}'],
+    playwright,
+  ),
+  // Storybook
+  ...applyConfigsToFiles(['*.stories.{js,jsx,ts,tsx}'], storybook),
+];
 ```
 
 `next.config.js`:
@@ -215,27 +209,44 @@ const nextConfig = {
 };
 ```
 
-### Scoped configuration with `overrides`
+### Scoped configuration with `files`
 
 ESLint configs can be scoped to include/exclude specific paths. This ensures
 that rules don't "leak" into places where those rules don't apply.
 
-In this example, Jest rules are only being applied to files matching Jest's
-default test match pattern.
+```js
+export default [
+  // ...intial configuration
+  {
+    files: ['**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/restrict-template-expressions': [
+        'error',
+        { allowAny: true, allowBoolean: true, allowNumber: true },
+      ],
+      '@typescript-eslint/no-misused-promises': [
+        'error',
+        { checksVoidReturn: { attributes: false } },
+      ],
+    },
+  },
+];
+```
+
+In case you need to apply multiple configs to certain files, you can use `applyConfigsToFiles` utility. That utility preserves the original configs `files` and also applies the patterns you specify:
 
 ```js
-module.exports = {
-  extends: [require.resolve('@datarockets/style-guide/eslint/node')],
-  overrides: [
-    {
-      files: [
-        '**/__tests__/**/*.{js,jsx,ts,tsx}',
-        '**/?(*.)+(spec|test).{js,jsx,ts,tsx}',
-      ],
-      extends: [require.resolve('@datarockets/style-guide/eslint/jest')],
-    },
-  ],
-};
+export default [
+  // ...intial configuration
+  ...applyConfigsToFiles(
+    ['some-dir/**/*'],
+    [
+      ...externalConfig,
+      // Here, the final `files` should match both 'some-dir/**/*' and '**/*.{ts,tsx}'.
+      { files: ['**/*.{ts,tsx}'], rules: { 'some-rule': 'off' } },
+    ],
+  ),
+];
 ```
 
 ### Configuring rules/settings
@@ -252,23 +263,24 @@ via the `components` setting.
 For example,
 
 ```js
-module.exports = {
-  root: true,
-  extends: [require.resolve('@datarockets/style-guide/eslint/react')],
-  settings: {
-    'jsx-a11y': {
-      components: {
-        Article: 'article',
-        Button: 'button',
-        Image: 'img',
-        Input: 'input',
-        Link: 'a',
-        Video: 'video',
-        // ...
+export default [
+  // ...intial configuration
+  {
+    settings: {
+      'jsx-a11y': {
+        components: {
+          Article: 'article',
+          Button: 'button',
+          Image: 'img',
+          Input: 'input',
+          Link: 'a',
+          Video: 'video',
+          // ...
+        },
       },
     },
   },
-};
+];
 ```
 
 #### `unicorn/filename-case`
@@ -278,20 +290,22 @@ your project already have a convention for file names, you can configure this
 rule to fit the convention (see [Documentation](https://github.com/sindresorhus/eslint-plugin-unicorn/blob/main/docs/rules/filename-case.md)):
 
 ```js
-module.exports = {
-  rules: {
-    // Your project uses both `camelCase` and `PascalCase`
-    'unicorn/filename-case': [
-      'error',
-      {
-        cases: {
-          camelCase: true,
-          pascalCase: true,
+export default [
+  {
+    rules: {
+      // Your project uses both `camelCase` and `PascalCase`
+      'unicorn/filename-case': [
+        'error',
+        {
+          cases: {
+            camelCase: true,
+            pascalCase: true,
+          },
         },
-      },
-    ],
+      ],
+    },
   },
-};
+];
 ```
 
 #### `simple-import-sort/imports` (import order)
@@ -318,28 +332,30 @@ import { sibling } from './sibling';
 You can configure it by modifying `simple-import-sort/imports` rule (see [Documentation](https://github.com/lydell/eslint-plugin-simple-import-sort)):
 
 ```js
-module.exports = {
-  rules: {
-    'simple-import-sort/imports': [
-      'error',
-      {
-        groups: [
-          // Type imports.
-          ['\\u0000$'],
-          // Side effect imports.
-          ['^\\u0000'],
-          // Node.js builtins prefixed with `node:`.
-          ['^node:'],
-          // Packages.
-          ['^@?\\w'],
-          // 1. Absolute imports and other imports such as Vue-style `@/foo`.
-          // 2. Relative imports.
-          ['^', '^\\.'],
-        ],
-      },
-    ],
+export default [
+  {
+    rules: {
+      'simple-import-sort/imports': [
+        'error',
+        {
+          groups: [
+            // Type imports.
+            ['\\u0000$'],
+            // Side effect imports.
+            ['^\\u0000'],
+            // Node.js builtins prefixed with `node:`.
+            ['^node:'],
+            // Packages.
+            ['^@?\\w'],
+            // 1. Absolute imports and other imports such as Vue-style `@/foo`.
+            // 2. Relative imports.
+            ['^', '^\\.'],
+          ],
+        },
+      ],
+    },
   },
-};
+];
 ```
 
 ### Debugging ESLint
@@ -374,7 +390,7 @@ To use it, just extend it in your `tsconfig.json`:
 }
 ```
 
-The base config isn't intented to be used as a complete one so you might need
+The base config isn't intended to be used as a complete one, so you might need
 to add more settings in your `tsconfig.json`. For example:
 
 ```json
