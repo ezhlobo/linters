@@ -32,3 +32,5 @@ export function applyConfigsToFiles(globPatterns, configs) {
     ],
   }));
 }
+
+export { includeIgnoreFile } from '@eslint/compat';
