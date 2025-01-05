@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   /**
    * This rule warns directive comments without description.
    *

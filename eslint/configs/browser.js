@@ -1,9 +1,9 @@
-const globals = require('globals');
+import globals from 'globals';
 
-const base = require('./_base');
+import base from './_base.js';
 
 /** @type {import('eslint').Linter.Config[]} */
-module.exports = [
+export default [
   ...base,
   {
     languageOptions: {

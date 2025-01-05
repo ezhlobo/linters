@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   /**
    * Require curly braces for multiline blocks.
    *

@@ -41,7 +41,7 @@ const disabledRules = {
   'unicorn/prevent-abbreviations': 'off',
 };
 
-module.exports = {
+export default {
   ...disabledRules,
   /**
    * Disallow useless `undefined`.

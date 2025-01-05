@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   /**
    * Require TSDoc comments conform to the TSDoc specification.
    *

@@ -1,5 +1,4 @@
-const path = require('node:path');
-const { minimatch } = require('minimatch');
+import { minimatch } from 'minimatch';
 
 /**
  * Maps through `configs` and applies them to the provided `globPatterns`.
@@ -14,24 +13,22 @@ const { minimatch } = require('minimatch');
  * applyConfigsToFiles(['*.{ts,tsx}'], tseslint.configs.recommended);
  * ```
  */
-function applyConfigsToFiles(globPatterns, configs) {
-  globPatterns = globPatterns.map(pattern => path.join(__dirname, pattern));
+export function applyConfigsToFiles(globPatterns, configs) {
+  const minimatchOptions = { dot: true };
 
   return configs.map(config => ({
     ...config,
     files: [
       filePath =>
-        globPatterns.some(pattern => minimatch(filePath, pattern)) &&
+        globPatterns.some(pattern =>
+          minimatch(filePath, pattern, minimatchOptions),
+        ) &&
         (config.files?.some(pattern =>
           typeof pattern === 'function'
             ? pattern(filePath)
-            : minimatch(filePath, pattern),
+            : minimatch(filePath, pattern, minimatchOptions),
         ) ??
           true),
     ],
   }));
 }
-
-module.exports = {
-  applyConfigsToFiles,
-};

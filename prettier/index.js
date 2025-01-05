@@ -3,7 +3,7 @@
  */
 
 /** @type {import('prettier').Config} */
-module.exports = {
+export default {
   arrowParens: 'avoid',
   trailingComma: 'all',
   endOfLine: 'lf',

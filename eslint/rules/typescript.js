@@ -1,4 +1,4 @@
-const standardRules = require('./standard');
+import standardRules from './standard.js';
 
 /**
  * Rules enabled by `@typescript-eslint` but we don't want them.
@@ -51,7 +51,7 @@ const extendedStandardRules = {
 };
 /* eslint-enable sort-keys -- enable back */
 
-module.exports = {
+export default {
   ...disabledImportRules,
   ...disabledTypescriptRules,
   ...extendedStandardRules,
