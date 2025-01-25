@@ -1,7 +1,7 @@
-/**
- * Rules enabled by `react/recommended` but we don't want them.
- */
-const disabledRules = {
+const disabledReactRules = {
+  '@eslint-react/dom/no-missing-button-type': 'off',
+  '@eslint-react/hooks-extra/no-direct-set-state-in-use-effect': 'off',
+  '@eslint-react/no-array-index-key': 'off',
   // Modern browsers don't need this.
   'react/jsx-no-target-blank': 'off',
   // We recommend using TypeScript over `prop-types`, as `prop-types` can add
@@ -11,8 +11,8 @@ const disabledRules = {
   'react/react-in-jsx-scope': 'off',
 };
 
-export default {
-  ...disabledRules,
+export const reactRules = {
+  ...disabledReactRules,
   /**
    * Require consistent function type for function components.
    *
@@ -85,4 +85,17 @@ export default {
    * 🔧 Fixable - https://github.com/jsx-eslint/eslint-plugin-react/blob/master/docs/rules/self-closing-comp.md
    */
   'react/self-closing-comp': 'warn',
+};
+
+const disabledReactTypeCheckedRules = {
+  '@eslint-react/dom/no-unknown-property': 'off',
+  '@eslint-react/no-duplicate-jsx-props': 'off',
+  '@eslint-react/use-jsx-vars': 'off',
+  // We use another rule for that which is type-safe.
+  'react/jsx-no-leaked-render': 'off',
+};
+
+export const reactTypeCheckedRules = {
+  ...disabledReactTypeCheckedRules,
+  '@eslint-react/no-leaked-conditional-rendering': 'warn',
 };
