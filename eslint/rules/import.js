@@ -49,7 +49,7 @@ export default {
    *
    * 🚫 Not fixable - https://github.com/import-js/eslint-plugin-import/blob/main/docs/rules/no-cycle.md
    */
-  'import/no-cycle': 'error',
+  'import/no-cycle': ['error', { disableScc: true, ignoreExternal: true }],
   /**
    * Disallow the use of extraneous packages.
    *
