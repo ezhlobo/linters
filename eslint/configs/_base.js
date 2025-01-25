@@ -2,8 +2,8 @@ import * as eslintrc from '@eslint/eslintrc';
 import js from '@eslint/js';
 import comments from '@eslint-community/eslint-plugin-eslint-comments/configs';
 import stylistic from '@stylistic/eslint-plugin';
+import prettierConfig from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
-import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import unicorn from 'eslint-plugin-unicorn';
 
@@ -22,7 +22,7 @@ export default [
   js.configs.recommended,
   importPlugin.flatConfigs.recommended,
   comments.recommended,
-  prettierRecommended,
+  prettierConfig,
   {
     languageOptions: {
       ...eslintrc.Legacy.environments.get('es2024'),
