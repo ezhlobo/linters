@@ -80,6 +80,15 @@ export default {
    */
   '@typescript-eslint/method-signature-style': 'warn',
   /**
+   * Disallow Promises in places not designed to handle them.
+   *
+   * 🚫 Not fixable - https://typescript-eslint.io/rules/no-misused-promises/
+   */
+  '@typescript-eslint/no-misused-promises': [
+    'error',
+    { checksVoidReturn: { attributes: false } },
+  ],
+  /**
    * Disallow unnecessary namespace qualifiers.
    *
    * 🔧 Fixable - https://typescript-eslint.io/rules/no-unnecessary-qualifier/
